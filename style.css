@@ -14,7 +14,7 @@ body {
     display: flex;
     flex-direction: column;
     padding-top: 80px;
-    background: linear-gradient(180deg, #f1cdff 0%, #fff0f6 100%);
+    background: linear-gradient(180deg, #fefbff 0%, #fff6fa 100%);
     color: #1e1e24;
     overflow-x: hidden; 
 }
