@@ -1,4 +1,3 @@
-
 (function() {
     emailjs.init("ld0_NkZs5zZdDOAcK");
 })();
@@ -22,12 +21,10 @@ let projectIndices = {
 window.changeSlide = function(id, direction) {
     const images = SLIDES[id];
     if (!images) return;
-
     projectIndices[id] = (projectIndices[id] + direction + images.length) % images.length;
     const imgElement = document.getElementById(id);
     if (imgElement) imgElement.src = images[projectIndices[id]];
 };
-
 
 window.nextSlide = function(id) { window.changeSlide(id, 1); };
 
@@ -58,13 +55,10 @@ async function fetchRepoData(repoName, descId, starsId, langId) {
     try {
         const repoRes = await fetch(`https://api.github.com/repos/jasmineraviz/${repoName}`);
         if (!repoRes.ok) throw new Error("Rate Limit");
-
         const repoData = await repoRes.json();
         const langRes = await fetch(repoData.languages_url);
         const langData = await langRes.json();
-
         const allLanguages = Object.keys(langData).join(' / ');
-
         document.getElementById(descId).innerText = repoData.description || "Active GitHub Project";
         document.getElementById(starsId).innerText = `⭐ ${repoData.stargazers_count}`;
         document.getElementById(langId).innerText = `💻 ${allLanguages || "Web"}`;
@@ -79,17 +73,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMenuBtn = document.querySelector("#close-menu-btn");
     const navLinks = document.querySelectorAll(".menu-links a");
 
-    if (menuBtn) {
-        menuBtn.onclick = () => header.classList.add("show-mobile-menu");
-    }
-
-    if (closeMenuBtn) {
-        closeMenuBtn.onclick = () => header.classList.remove("show-mobile-menu");
-    }
+    if (menuBtn) menuBtn.onclick = () => header.classList.add("show-mobile-menu");
+    if (closeMenuBtn) closeMenuBtn.onclick = () => header.classList.remove("show-mobile-menu");
 
     navLinks.forEach(link => {
         link.onclick = () => header.classList.remove("show-mobile-menu");
     });
+
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = 'Sending...';
+
+            emailjs.sendForm('service_vi60jch', 'template_bc96fvc', this)
+                .then(() => {
+                    btn.innerText = 'Sent!';
+                    this.reset();
+                    setTimeout(() => { btn.innerText = originalText; }, 3000);
+                }, (error) => {
+                    console.log('FAILED...', error);
+                    btn.innerText = 'Error';
+                });
+        });
+    }
 
     const inquiryForm = document.getElementById('inquiry-form');
     if (inquiryForm) {
@@ -100,7 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
             emailjs.sendForm('service_vi60jch', 'template_m87l46r', this)
                 .then(() => {
                     btn.innerText = "✅ Sent!";
-                    setTimeout(() => { this.reset(); closeModal(); btn.innerText = "Submit Inquiry"; }, 2000);
+                    setTimeout(() => { 
+                        this.reset(); 
+                        closeModal(); 
+                        btn.innerText = "Submit Inquiry"; 
+                    }, 2000);
                 });
         });
     }
